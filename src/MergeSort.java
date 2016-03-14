@@ -2,110 +2,77 @@
  * Created by hemanth on 14/03/2016.
  */
 public class MergeSort extends Thread{
-
-
-    public static int[] mergeSort(int[] A){
-
-        //If array completely sorted or single element then return it
-        if(A.length < 2)
-            return A;
-
-        int midPoint = (int) Math.floor(A.length/2);
-        int[] lArray = new int[midPoint];
-        int[] rArray = new int[A.length-midPoint];
-
-        for(int i=0; i<A.length; i++)
-        {
-            if(i < lArray.length)
-                lArray[i] = A[i];
-            else
-                rArray[i-midPoint] = A[i];
+    private static int []a;
+    private static int []b;
+    // sorting the function here
+    public static int[] sort(int [] a){
+        int []tempArray = new int[a.length];
+        mergeSort(tempArray,0,a.length-1,a);
+        return tempArray;
+    }
+    // merge the sorted function
+    public static void mergeSort(int []tempArray,int lowerIndex, int upperIndex,int [] a){
+        if(lowerIndex == upperIndex){
+            return;
+        }else{
+            int mid = (lowerIndex+upperIndex)/2;
+            mergeSort(tempArray, lowerIndex, mid,a);
+            mergeSort(tempArray, mid+1, upperIndex,a);
+            merge(tempArray,lowerIndex,mid+1,upperIndex,a);
         }
-
-        int[] sortedArray = new int[A.length];
-
-        lArray = mergeSort(lArray);
-        rArray = mergeSort(rArray);
-
-        sortedArray = merge(lArray, rArray);
-
-        return sortedArray;
-
     }
 
-    public static int[] merge(int[] lArray, int[] rArray)
-    {
-        int i=0;
-        int j=0;
-        int k=0;
-        int[] newArr = new int[lArray.length + rArray.length];
-        while(i<lArray.length && j<rArray.length)
-        {
-            if(lArray[i] <= rArray[j])
-            {
-                newArr[k] = lArray[i];
-                i++;
-                k++;
-            }else
-            {
-                newArr[k] = rArray[j];
-                j++;
-                k++;
+    public static void merge(int []tempArray,int lowerIndexCursor,int higerIndex,int upperIndex, int[] a){
+        int tempIndex=0;
+        int lowerIndex = lowerIndexCursor;
+        int midIndex = higerIndex-1;
+        int totalItems = upperIndex-lowerIndex+1;
+        while(lowerIndex <= midIndex && higerIndex <= upperIndex){
+            if(a[lowerIndex] < a[higerIndex]){
+                tempArray[tempIndex++] = a[lowerIndex++];
+            }else{
+                tempArray[tempIndex++] = a[higerIndex++];
             }
-
         }
 
-        //There will be some elements of array left out in any one of the arrays lArray or rArray. Hence the below
-        while(i < lArray.length)
-        {
-            newArr[k] = lArray[i];
-            i++;
-            k++;
+        while(lowerIndex <= midIndex){
+            tempArray[tempIndex++] = a[lowerIndex++];
         }
 
-        while(j < rArray.length)
-        {
-            newArr[k] = rArray[j];
-            j++;
-            k++;
+        while(higerIndex <= upperIndex){
+            tempArray[tempIndex++] = a[higerIndex++];
         }
 
-        return newArr;
+        for(int i=0;i<totalItems;i++){
+            a[lowerIndexCursor+i] = tempArray[i];
+        }
     }
-
-
-    @Override
+    // Printing the array
+    public static void printArray(int []array){
+        for(int i : array){
+            System.out.print(i+" ");
+        }
+    }
+    // geneating the array
+    public static int[] getArray(){
+        int size=10;
+        int []array = new int[size];
+        int item = 0;
+        for(int i=0;i<size;i++){
+            item = (int)(Math.random()*100);
+            array[i] = item;
+        }
+        return array;
+    }
     public void run() {
-        int A[] = new int[10];
-        //Fill elements in to the array
-        fillArray(A);
-        //Print elements before sort
-        System.out.println("Printing unsorted array :");
-        printArray(A);
-
-        A = mergeSort(A);
-
-        //Print sorted array
-        System.out.println("Printing sorted array :");
-        printArray(A);
-    }
-
-    public static int[] fillArray(int[] A)
-    {
-        for(int i=0; i<A.length; i++)
-        {
-            A[i] = (int) (Math.random()*100);
-        }
-
-        return A;
-    }
-
-    public static void printArray(int[] A)
-    {
-        for(int i=0; i<A.length; i++)
-        {
-            System.out.print(A[i] + ", ");
-        }
+        System.out.print("Printing the input");
+        a = getArray();
+        printArray(a);
+        System.out.print("Printing the output");
+        b= sort(a);
         System.out.println();
+        printArray(b);
+
     }
+
 }
